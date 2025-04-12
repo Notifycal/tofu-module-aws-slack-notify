@@ -1,10 +1,8 @@
-# AWS Notify Slack Terraform module
+# tofu-module-aws-slack-notify
+
+Forked from [terraform-aws-modules/terraform-aws-notify-slack](https://github.com/terraform-aws-modules/terraform-aws-notify-slack)
 
 This module creates an SNS topic (or uses an existing one) and an AWS Lambda function that sends notifications to Slack using the [incoming webhooks API](https://api.slack.com/incoming-webhooks).
-
-Start by setting up an [incoming webhook integration](https://my.slack.com/services/new/incoming-webhook/) in your Slack workspace.
-
-Doing serverless with Terraform? Check out [serverless.tf framework](https://serverless.tf), which aims to simplify all operations when working with the serverless in Terraform.
 
 ## Supported Features
 
@@ -22,27 +20,13 @@ Doing serverless with Terraform? Check out [serverless.tf framework](https://ser
 
 ```hcl
 module "notify_slack" {
-  source  = "terraform-aws-modules/notify-slack/aws"
-  version = "~> 5.0"
+  source = "git@github.com:Notifycal/tofu-module-aws-slack-notify.git",
 
   sns_topic_name = "slack-topic"
 
-  slack_webhook_url = "https://hooks.slack.com/services/AAA/BBB/CCC"
-  slack_channel     = "aws-notification"
-  slack_username    = "reporter"
+  slack_channel     = "#aws-notification"
+  slack_bot_token   = "xoxb-...."
 }
-```
-
-## Using with Terraform Cloud Agents
-
-[Terraform Cloud Agents](https://www.terraform.io/docs/cloud/workspaces/agent.html) are a paid feature, available as part of the Terraform Cloud for Business upgrade package.
-
-This module requires Python 3.11. You can customize [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) to include Python using this sample `Dockerfile`:
-
-```Dockerfile
-FROM hashicorp/tfc-agent:latest
-RUN apt-get -y update && apt-get -y install python3.11 python3-pip
-ENTRYPOINT ["/bin/tfc-agent"]
 ```
 
 ## Use existing SNS topic or create new
