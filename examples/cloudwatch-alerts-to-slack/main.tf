@@ -33,6 +33,9 @@ module "notify_slack" {
   slack_webhook_url = aws_kms_ciphertext.slack_url.ciphertext_blob
   slack_channel     = "aws-notification"
   slack_username    = "reporter"
+  slack_bot_token   = "xoxb-this-is-a-bot-token"
+
+  environment = "myenv"
 
   kms_key_arn = aws_kms_key.this.arn
 
