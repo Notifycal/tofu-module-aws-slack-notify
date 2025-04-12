@@ -33,7 +33,5 @@ module "custom_lambda" {
   slack_username    = "reporter"
   slack_bot_token   = "xoxb-this-is-a-bot-token"
 
-  environment = "myenv"
-
   tags = local.custom.tags
 }

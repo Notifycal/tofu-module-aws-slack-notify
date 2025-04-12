@@ -82,7 +82,6 @@ def format_cloudwatch_alarm(message: Dict[str, Any], subject: str, region: str) 
     :returns: formatted Slack message payload
     """
 
-    environment = os.environ["ENVIRONMENT"]
     cloudwatch_url = get_service_url(region=region, service="cloudwatch")
     alarm_name = message["AlarmName"]
     alarm_link = f"{cloudwatch_url}#alarm:alarmFilter=ANY;name={urllib.parse.quote(alarm_name)}"
@@ -102,7 +101,7 @@ def format_cloudwatch_alarm(message: Dict[str, Any], subject: str, region: str) 
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": f"{alarm_date}\n\nAlarm Name:\t*<{alarm_link}|{alarm_name}>*\nEnvironment:\t*{environment}*"
+            "text": f"{alarm_date}\n\nAlarm Name:\t*<{alarm_link}|{alarm_name}>*"
           },
           "fields": [
             {

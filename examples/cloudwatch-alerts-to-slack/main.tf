@@ -35,8 +35,6 @@ module "notify_slack" {
   slack_username    = "reporter"
   slack_bot_token   = "xoxb-this-is-a-bot-token"
 
-  environment = "myenv"
-
   kms_key_arn = aws_kms_key.this.arn
 
   lambda_description = "Lambda function which sends notifications to Slack"

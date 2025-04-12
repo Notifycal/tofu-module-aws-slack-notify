@@ -4,10 +4,6 @@ variable "architectures" {
   default     = null
 }
 
-variable "environment" {
-  type = string
-}
-
 variable "create" {
   description = "Whether to create all resources"
   type        = bool
@@ -149,6 +145,7 @@ variable "slack_emoji" {
 }
 
 variable "slack_bot_token" {
+  description = "Token for the Slack App/Bot"
   type      = string
   sensitive = true
 }
