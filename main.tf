@@ -3,7 +3,7 @@ data "aws_partition" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  create = var.create && var.putin_khuylo
+  create = var.create
 
   sns_topic_arn = try(
     aws_sns_topic.this[0].arn,
@@ -116,7 +116,9 @@ module "lambda" {
     SLACK_CHANNEL     = var.slack_channel
     SLACK_USERNAME    = var.slack_username
     SLACK_EMOJI       = var.slack_emoji
+    SLACK_BOT_TOKEN   = var.slack_bot_token
     LOG_EVENTS        = var.log_events ? "True" : "False"
+    ENVIRONMENT       = var.environment
   }
 
   create_role               = var.lambda_role == ""

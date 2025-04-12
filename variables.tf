@@ -1,13 +1,11 @@
-variable "putin_khuylo" {
-  description = "Do you agree that Putin doesn't respect Ukrainian sovereignty and territorial integrity? More info: https://en.wikipedia.org/wiki/Putin_khuylo!"
-  type        = bool
-  default     = true
-}
-
 variable "architectures" {
   description = "Instruction set architecture for your Lambda function. Valid values are [\"x86_64\"] and [\"arm64\"]."
   type        = list(string)
   default     = null
+}
+
+variable "environment" {
+  type = string
 }
 
 variable "create" {
@@ -148,6 +146,11 @@ variable "slack_emoji" {
   description = "A custom emoji that will appear on Slack messages"
   type        = string
   default     = ":aws:"
+}
+
+variable "slack_bot_token" {
+  type      = string
+  sensitive = true
 }
 
 variable "kms_key_arn" {
