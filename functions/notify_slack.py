@@ -7,7 +7,6 @@
 
 """
 
-import base64
 import json
 import logging
 import os
@@ -32,6 +31,7 @@ SECURITY_HUB_CLIENT = boto3.client('securityhub', region_name=REGION)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 class AwsService(Enum):
     """AWS service supported by function"""
 
@@ -41,10 +41,10 @@ class AwsService(Enum):
 
 
 def format_iso_date(date: str) -> str:
-  dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z")
-  # Convert to local timezone (system timezone)
-  local_dt = dt.astimezone()
-  return local_dt.strftime("%b %d, %Y %I:%M %p %Z")
+    dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z")
+    # Convert to local timezone (system timezone)
+    local_dt = dt.astimezone()
+    return local_dt.strftime("%b %d, %Y %I:%M %p %Z")
 
 
 def get_service_url(region: str, service: str) -> str:
