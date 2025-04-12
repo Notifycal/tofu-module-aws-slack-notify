@@ -31,6 +31,9 @@ module "custom_lambda" {
   slack_webhook_url = "https://hooks.slack.com/services/AAA/BBB/CCC"
   slack_channel     = "aws-notification"
   slack_username    = "reporter"
+  slack_bot_token   = "xoxb-this-is-a-bot-token"
+
+  environment = "myenv"
 
   tags = local.custom.tags
 }
