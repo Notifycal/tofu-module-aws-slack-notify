@@ -118,7 +118,6 @@ module "lambda" {
     SLACK_EMOJI       = var.slack_emoji
     SLACK_BOT_TOKEN   = var.slack_bot_token
     LOG_EVENTS        = var.log_events ? "True" : "False"
-    ENVIRONMENT       = var.environment
   }
 
   create_role               = var.lambda_role == ""
