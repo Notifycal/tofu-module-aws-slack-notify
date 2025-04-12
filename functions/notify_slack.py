@@ -28,6 +28,8 @@ KMS_CLIENT = boto3.client("kms", region_name=REGION)
 
 SECURITY_HUB_CLIENT = boto3.client('securityhub', region_name=REGION)
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class AwsService(Enum):
     """AWS service supported by function"""
@@ -49,7 +51,7 @@ def decrypt_url(encrypted_url: str) -> str:
         )
         return decrypted_payload["Plaintext"].decode()
     except Exception:
-        logging.exception("Failed to decrypt URL with KMS")
+        logger.exception("Failed to decrypt URL with KMS")
         return ""
 
 
@@ -149,9 +151,9 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
                 }],
                 Workflow={"Status": "NOTIFIED"}
             )
-            logging.warning(f"Successfully updated finding status to NOTIFIED: {json.dumps(notified)}")
+            logger.warning(f"Successfully updated finding status to NOTIFIED: {json.dumps(notified)}")
     except Exception as e:
-        logging.error(f"Failed to update finding status: {str(e)}")
+        logger.error(f"Failed to update finding status: {str(e)}")
         pass
 
     if finding.get("ProductName") == "Inspector":
@@ -552,7 +554,7 @@ def get_slack_message_payload(
         try:
             message = json.loads(message)
         except json.JSONDecodeError:
-            logging.info("Not a structured payload, just a string message")
+            logger.info("Not a structured payload, just a string message")
 
     message = cast(Dict[str, Any], message)
 
@@ -587,7 +589,7 @@ def send_slack_notification(payload: Dict[str, Any]) -> str:
         return json.dumps({"code": result.getcode(), "info": result.info().as_string()})
 
     except HTTPError as e:
-        logging.error(f"{e}: result")
+        logger.error(f"{e}: result")
         return json.dumps({"code": e.getcode(), "info": e.info().as_string()})
 
 
@@ -601,7 +603,7 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
     """
 
     if os.environ.get("LOG_EVENTS", "False") == "True":
-        logging.info("Event logging enabled: %s", json.dumps(event))
+        logger.info("Event logging enabled: %s", json.dumps(event))
 
     for record in event["Records"]:
         sns = record["Sns"]
@@ -616,7 +618,7 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
 
     if json.loads(response)["code"] != 200:
         response_info = json.loads(response)["info"]
-        logging.error(
+        logger.error(
             f"Error: received status `{response_info}` using event `{event}` and context `{context}`"
         )
 
