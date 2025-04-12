@@ -146,8 +146,8 @@ variable "slack_emoji" {
 
 variable "slack_bot_token" {
   description = "Token for the Slack App/Bot"
-  type      = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 
 variable "kms_key_arn" {
