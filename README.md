@@ -33,14 +33,9 @@ module "notify_slack" {
 
 If you want to subscribe the AWS Lambda Function created by this module to an existing SNS topic you should specify `create_sns_topic = false` as an argument and specify the name of existing SNS topic name in `sns_topic_name`.
 
-## Examples
-
-- [notify-slack-simple](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/tree/master/examples/notify-slack-simple) - Creates SNS topic which sends messages to Slack channel.
-- [cloudwatch-alerts-to-slack](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/tree/master/examples/cloudwatch-alerts-to-slack) - End to end example which shows how to send AWS Cloudwatch alerts to Slack channel and use KMS to encrypt webhook URL.
-
 ## Local Development and Testing
 
-See the [functions](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/tree/master/functions) for further details.
+See the [functions](https://github.com/Notifycal/tofu-module-aws-slack-notify/tree/master/functions) for further details.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -146,8 +141,8 @@ See the [functions](https://github.com/terraform-aws-modules/terraform-aws-notif
 
 ## Authors
 
-Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/graphs/contributors).
+Module is maintained by [Notifycal](https://github.com/Notifycal). It's been forked from [this module](https://github.com/terraform-aws-modules/terraform-aws-notify-slack).
 
 ## License
 
-Apache 2 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/tree/master/LICENSE) for full details.
+Apache 2 Licensed. See [LICENSE](https://github.com/Notifycal/tofu-module-aws-slack-notify/tree/master/LICENSE) for full details.
