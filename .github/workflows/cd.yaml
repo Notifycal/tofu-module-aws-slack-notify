@@ -2,11 +2,11 @@ on:
   push:
     branches:
       - main
-  # pull_request:
-  #   branches:
-  #     - main
-  #   paths-ignore:
-  #     - 'CHANGELOG.md'  # This is what release-please changes in the release PRs
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'CHANGELOG.md'  # This is what release-please changes in the release PRs
 
 concurrency:
   # github.head_ref is only set when the workflow was triggered by a
@@ -94,55 +94,55 @@ jobs:
             popd > /dev/null || exit
           done
 
-      # - run: tofu fmt -recursive
-      #   if: github.event_name == 'pull_request'
+      - run: tofu fmt -recursive
+        if: github.event_name == 'pull_request'
 
-      # - id: has_submodules
-      #   run: |
-      #     if [[ -d "modules/" ]]; then
-      #       echo "RECURSIVE=true" >> "${GITHUB_ENV}"
-      #       echo "RECURSIVE_PATH=modules" >> "${GITHUB_ENV}"
-      #     else
-      #       echo "RECURSIVE=false" >> "${GITHUB_ENV}"
-      #       echo "RECURSIVE_PATH=" >> "${GITHUB_ENV}"
-      #     fi
+      - id: has_submodules
+        run: |
+          if [[ -d "modules/" ]]; then
+            echo "RECURSIVE=true" >> "${GITHUB_ENV}"
+            echo "RECURSIVE_PATH=modules" >> "${GITHUB_ENV}"
+          else
+            echo "RECURSIVE=false" >> "${GITHUB_ENV}"
+            echo "RECURSIVE_PATH=" >> "${GITHUB_ENV}"
+          fi
 
-      # - name: Render OpenTofu docs
-      #   if: github.event_name == 'pull_request'
-      #   uses: terraform-docs/gh-actions@v1
-      #   with:
-      #     output-method: inject
-      #     config-file: .terraform-docs.yaml
-      #     recursive: ${{ env.RECURSIVE }}
-      #     recursive-path: ${{ env.RECURSIVE_PATH }}
+      - name: Render OpenTofu docs
+        if: github.event_name == 'pull_request'
+        uses: terraform-docs/gh-actions@v1
+        with:
+          output-method: inject
+          config-file: .terraform-docs.yaml
+          recursive: ${{ env.RECURSIVE }}
+          recursive-path: ${{ env.RECURSIVE_PATH }}
 
-      # - name: Debug
-      #   if: github.event_name == 'pull_request'
-      #   run: |
-      #     ls -lha .git
-      #     ls -lha .git/objects
+      - name: Debug
+        if: github.event_name == 'pull_request'
+        run: |
+          ls -lha .git
+          ls -lha .git/objects
 
-      # - name: Fix .git owner
-      #   if: github.event_name == 'pull_request'
-      #   run: sudo chown runner:docker -R .git
-      #   # https://github.com/terraform-docs/gh-actions/issues/90
+      - name: Fix .git owner
+        if: github.event_name == 'pull_request'
+        run: sudo chown runner:docker -R .git
+        # https://github.com/terraform-docs/gh-actions/issues/90
 
-      # - name: 'Push to ${{ github.head_ref || github.ref_name }}'
-      #   if: github.event_name == 'pull_request'
-      #   run: |
-      #     git config user.name github-actions
-      #     git config user.email github-actions@github.com
-      #     git add .
+      - name: 'Push to ${{ github.head_ref || github.ref_name }}'
+        if: github.event_name == 'pull_request'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
 
-      #     # Check if there are any staged changes before committing
-      #     if git diff --cached --quiet; then
-      #       echo "git_changes=false" >> "${GITHUB_OUTPUT}"
-      #       echo "No changes to commit."
-      #     else
-      #       echo "git_changes=true" >> "${GITHUB_OUTPUT}"
-      #       git commit -m "ci(auto): generate docs and format"
-      #       git push
-      #     fi
+          # Check if there are any staged changes before committing
+          if git diff --cached --quiet; then
+            echo "git_changes=false" >> "${GITHUB_OUTPUT}"
+            echo "No changes to commit."
+          else
+            echo "git_changes=true" >> "${GITHUB_OUTPUT}"
+            git commit -m "ci(auto): generate docs and format"
+            git push
+          fi
 
       - id: release-please
         if: github.event_name == 'push'
