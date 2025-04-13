@@ -1,0 +1,14 @@
+on:
+  issues:
+    types:
+      - opened
+
+name: Add opened issue to project
+jobs:
+  add-issue-to-project:
+    uses: Notifycal/gh-actions/.github/workflows/add-issue-to-project.reuse.yaml@v0.2.0
+    with:
+      issue-node-id: ${{ github.event.issue.node_id }}
+    secrets:
+      NOTIFYCAL_CICD_APP_ID: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
+      NOTIFYCAL_CICD_APP_SECRET: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
