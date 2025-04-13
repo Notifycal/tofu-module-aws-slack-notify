@@ -112,9 +112,7 @@ module "lambda" {
   publish = true
 
   environment_variables = {
-    SLACK_WEBHOOK_URL = var.slack_webhook_url
     SLACK_CHANNEL     = var.slack_channel
-    SLACK_EMOJI       = var.slack_emoji
     SLACK_BOT_TOKEN   = var.slack_bot_token
     LOG_EVENTS        = var.log_events ? "True" : "False"
   }
