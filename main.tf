@@ -112,9 +112,9 @@ module "lambda" {
   publish = true
 
   environment_variables = {
-    SLACK_CHANNEL     = var.slack_channel
-    SLACK_BOT_TOKEN   = var.slack_bot_token
-    LOG_EVENTS        = var.log_events ? "True" : "False"
+    SLACK_CHANNEL   = var.slack_channel
+    SLACK_BOT_TOKEN = var.slack_bot_token
+    LOG_EVENTS      = var.log_events ? "True" : "False"
   }
 
   create_role               = var.lambda_role == ""

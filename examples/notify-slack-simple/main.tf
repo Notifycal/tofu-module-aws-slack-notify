@@ -30,8 +30,8 @@ module "notify_slack" {
   sns_topic_name   = aws_sns_topic.example.name
   create_sns_topic = false
 
-  slack_channel     = "aws-notification"
-  slack_bot_token   = "xoxb-this-is-a-bot-token"
+  slack_channel   = "aws-notification"
+  slack_bot_token = "xoxb-this-is-a-bot-token"
 
   tags = local.tags
 }
