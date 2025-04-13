@@ -123,25 +123,9 @@ variable "sns_topic_lambda_feedback_sample_rate" {
   default     = 100
 }
 
-variable "slack_webhook_url" {
-  description = "The URL of Slack webhook"
-  type        = string
-}
-
 variable "slack_channel" {
   description = "The name of the channel in Slack for notifications"
   type        = string
-}
-
-variable "slack_username" {
-  description = "The username that will appear on Slack messages"
-  type        = string
-}
-
-variable "slack_emoji" {
-  description = "A custom emoji that will appear on Slack messages"
-  type        = string
-  default     = ":aws:"
 }
 
 variable "slack_bot_token" {

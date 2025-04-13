@@ -22,8 +22,6 @@ def test_sns_get_slack_message_payload_snapshots(snapshot, monkeypatch):
     """
 
     monkeypatch.setenv("SLACK_CHANNEL", "slack_testing_sandbox")
-    monkeypatch.setenv("SLACK_USERNAME", "notify_slack_test")
-    monkeypatch.setenv("SLACK_EMOJI", ":aws:")
 
     # These are SNS messages that invoke the lambda handler; the event payload is in the
     # `message` field
@@ -59,8 +57,6 @@ def test_event_get_slack_message_payload_snapshots(snapshot, monkeypatch):
     """
 
     monkeypatch.setenv("SLACK_CHANNEL", "slack_testing_sandbox")
-    monkeypatch.setenv("SLACK_USERNAME", "notify_slack_test")
-    monkeypatch.setenv("SLACK_EMOJI", ":aws:")
 
     # These are just the raw events that will be converted to JSON string and
     # sent via SNS message
@@ -86,11 +82,7 @@ def test_environment_variables_set(monkeypatch):
     """
 
     monkeypatch.setenv("SLACK_CHANNEL", "slack_testing_sandbox")
-    monkeypatch.setenv("SLACK_USERNAME", "notify_slack_test")
-    monkeypatch.setenv("SLACK_EMOJI", ":aws:")
-    monkeypatch.setenv(
-        "SLACK_WEBHOOK_URL", "https://hooks.slack.com/services/YOUR/WEBOOK/URL"
-    )
+    monkeypatch.setenv("SLACK_BOT_TOKEN", "xoxb-fake-token-for-test")
 
     with open(os.path.join("./messages/text_message.json"), "r") as efile:
         event = ast.literal_eval(efile.read())
