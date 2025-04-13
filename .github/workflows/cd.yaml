@@ -43,11 +43,11 @@ jobs:
               - '*.tf'
               - 'modules/**'
 
-      # - name: Validate commits with commitlint
-      #   uses: wagoid/commitlint-github-action@v6
-      #   id: commitlint
-      #   with:
-      #     configFile: .commitlintrc.json
+      - name: Validate commits with commitlint
+        uses: wagoid/commitlint-github-action@v6
+        id: commitlint
+        with:
+          configFile: .commitlintrc.json
 
       - name: Get tofu version from .opentofu-version
         run: echo "tofu_version=$(cat .opentofu-version)" >> "${GITHUB_OUTPUT}"
