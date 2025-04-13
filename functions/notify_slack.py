@@ -74,7 +74,7 @@ class CloudWatchAlarmState(Enum):
     ALARM = ":rotating_light:"
 
 
-def format_cloudwatch_alarm(message: Dict[str, Any], subject: str, region: str) -> Dict[str, Any]:
+def format_cloudwatch_alarm(message: Dict[str, Any], region: str) -> Dict[str, Any]:
     """Format CloudWatch alarm event into Slack message format
 
     :params message: SNS message body containing CloudWatch alarm event
@@ -88,13 +88,15 @@ def format_cloudwatch_alarm(message: Dict[str, Any], subject: str, region: str) 
     alarm_date = format_iso_date(message["StateChangeTime"])
     alarm_emoji = CloudWatchAlarmState[message["NewStateValue"]].value
 
+    alarm_title = f"{alarm_emoji} {message['NewStateValue']}: \"{alarm_name}\" in {message['Region']} {alarm_emoji}"
+
     return {
       "blocks": [
         {
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": f"{alarm_emoji} {subject} {alarm_emoji}"
+            "text": alarm_title
           }
         },
         {
@@ -126,7 +128,7 @@ def format_cloudwatch_alarm(message: Dict[str, Any], subject: str, region: str) 
             },
             {
               "type": "mrkdwn",
-              "text": f"*Alarm reason:*\n{message['NewStateReason']}"
+              "text": f"*Alarm Reason:*\n{message['NewStateReason']}"
             }
           ]
         }
@@ -521,7 +523,7 @@ def parse_notification(message: Dict[str, Any], subject: Optional[str], region: 
     :returns: Slack message payload
     """
     if "AlarmName" in message:
-        return format_cloudwatch_alarm(message=message, subject=subject, region=region)
+        return format_cloudwatch_alarm(message=message, region=region)
     if isinstance(message, Dict) and message.get("detail-type") == "GuardDuty Finding":
         return format_guardduty_finding(message=message, region=message["region"])
     if isinstance(message, Dict) and message.get("detail-type") == "Security Hub Findings - Imported":
@@ -547,7 +549,7 @@ def get_slack_message_payload(
 
     slack_channel = os.environ["SLACK_CHANNEL"]
 
-    payload = {
+    payload: Dict[str, Any] = {
       "channel": slack_channel,
     }
 
@@ -558,8 +560,9 @@ def get_slack_message_payload(
             message = json.loads(message)
         except json.JSONDecodeError:
             logger.info("Not a structured payload, just a string message")
-            payload["text"] = message
-            return payload
+            if isinstance(message, str):
+                payload["text"] = message  # ✅ type is now definitely str
+                return payload
 
     message = cast(Dict[str, Any], message)
 
