@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    Notify Slack
-    ------------
+Notify Slack
+------------
 
-    Receives event payloads that are parsed and sent to Slack
+Receives event payloads that are parsed and sent to Slack
 
 """
 
@@ -26,7 +26,7 @@ REGION = os.environ.get("AWS_REGION", "us-east-1")
 # Create client so its cached/frozen between invocations
 KMS_CLIENT = boto3.client("kms", region_name=REGION)
 
-SECURITY_HUB_CLIENT = boto3.client('securityhub', region_name=REGION)
+SECURITY_HUB_CLIENT = boto3.client("securityhub", region_name=REGION)
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -84,55 +84,49 @@ def format_cloudwatch_alarm(message: Dict[str, Any], region: str) -> Dict[str, A
 
     cloudwatch_url = get_service_url(region=region, service="cloudwatch")
     alarm_name = message["AlarmName"]
-    alarm_link = f"{cloudwatch_url}#alarm:alarmFilter=ANY;name={urllib.parse.quote(alarm_name)}"
+    alarm_link = (
+        f"{cloudwatch_url}#alarm:alarmFilter=ANY;name={urllib.parse.quote(alarm_name)}"
+    )
     alarm_date = format_iso_date(message["StateChangeTime"])
     alarm_emoji = CloudWatchAlarmState[message["NewStateValue"]].value
 
     alarm_title = f"{alarm_emoji} {message['NewStateValue']}: \"{alarm_name}\" in {message['Region']} {alarm_emoji}"
 
     return {
-      "blocks": [
-        {
-          "type": "header",
-          "text": {
-            "type": "plain_text",
-            "text": alarm_title
-          }
-        },
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": f"{alarm_date}\n\nAlarm Name:\t*<{alarm_link}|{alarm_name}>*"
-          },
-          "fields": [
+        "blocks": [
+            {"type": "header", "text": {"type": "plain_text", "text": alarm_title}},
             {
-              "type": "mrkdwn",
-              "text": f"*Old state*\n`{message['OldStateValue']}`"
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"{alarm_date}\n\nAlarm Name:\t*<{alarm_link}|{alarm_name}>*",
+                },
+                "fields": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Old state*\n`{message['OldStateValue']}`",
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Current state*\n`{message['NewStateValue']}`",
+                    },
+                ],
             },
+            {"type": "divider"},
             {
-              "type": "mrkdwn",
-              "text": f"*Current state*\n`{message['NewStateValue']}`"
-            }
-          ]
-        },
-        {
-          "type": "divider"
-        },
-        {
-          "type": "context",
-          "elements": [
-            {
-              "type": "mrkdwn",
-              "text": f"*Alarm Description:*\n{message['AlarmDescription']}"
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Alarm Description:*\n{message['AlarmDescription']}",
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Alarm Reason:*\n{message['NewStateReason']}",
+                    },
+                ],
             },
-            {
-              "type": "mrkdwn",
-              "text": f"*Alarm Reason:*\n{message['NewStateReason']}"
-            }
-          ]
-        }
-      ]
+        ]
     }
 
 
@@ -153,13 +147,14 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
         workflow_status = finding["Workflow"].get("Status", "UNKNOWN")
         if compliance_status == "FAILED" and workflow_status == "NEW":
             notified = SECURITY_HUB_CLIENT.batch_update_findings(
-                FindingIdentifiers=[{
-                    'Id': finding.get('Id'),
-                    'ProductArn': finding.get("ProductArn")
-                }],
-                Workflow={"Status": "NOTIFIED"}
+                FindingIdentifiers=[
+                    {"Id": finding.get("Id"), "ProductArn": finding.get("ProductArn")}
+                ],
+                Workflow={"Status": "NOTIFIED"},
             )
-            logger.warning(f"Successfully updated finding status to NOTIFIED: {json.dumps(notified)}")
+            logger.warning(
+                f"Successfully updated finding status to NOTIFIED: {json.dumps(notified)}"
+            )
     except Exception as e:
         logger.error(f"Failed to update finding status: {str(e)}")
         pass
@@ -171,20 +166,26 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
         Id = finding.get("Id", "No ID Provided")
         title = finding.get("Title", "No Title Provided")
         description = finding.get("Description", "No Description Provided")
-        control_id = finding['ProductFields'].get('ControlId', 'N/A')
+        control_id = finding["ProductFields"].get("ControlId", "N/A")
         control_url = service_url + f"#/controls/{control_id}"
-        aws_account_id = finding.get('AwsAccountId', 'Unknown Account')
-        first_observed = finding.get('FirstObservedAt', 'Unknown Date')
-        last_updated = finding.get('UpdatedAt', 'Unknown Date')
-        affected_resource = finding['Resources'][0].get('Id', 'Unknown Resource')
-        remediation_url = finding.get("Remediation", {}).get("Recommendation", {}).get("Url", "#")
+        aws_account_id = finding.get("AwsAccountId", "Unknown Account")
+        first_observed = finding.get("FirstObservedAt", "Unknown Date")
+        last_updated = finding.get("UpdatedAt", "Unknown Date")
+        affected_resource = finding["Resources"][0].get("Id", "Unknown Resource")
+        remediation_url = (
+            finding.get("Remediation", {}).get("Recommendation", {}).get("Url", "#")
+        )
 
-        finding_base_path = "#/findings?search=Id%3D%255Coperator%255C%253AEQUALS%255C%253A"
-        double_encoded_id = urllib.parse.quote(urllib.parse.quote(Id, safe=''), safe='')
+        finding_base_path = (
+            "#/findings?search=Id%3D%255Coperator%255C%253AEQUALS%255C%253A"
+        )
+        double_encoded_id = urllib.parse.quote(urllib.parse.quote(Id, safe=""), safe="")
         finding_url = f"{service_url}{finding_base_path}{double_encoded_id}"
         generator_id = finding.get("GeneratorId", "Unknown Generator")
 
-        color = SecurityHubSeverity.get(severity.upper(), SecurityHubSeverity.INFORMATIONAL).value
+        color = SecurityHubSeverity.get(
+            severity.upper(), SecurityHubSeverity.INFORMATIONAL
+        ).value
         if compliance_status == "PASSED":
             color = "#4BB543"
 
@@ -194,17 +195,33 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
             "fields": [
                 {"title": "Title", "value": f"`{title}`", "short": False},
                 {"title": "Description", "value": f"`{description}`", "short": False},
-                {"title": "Compliance Status", "value": f"`{compliance_status}`", "short": True},
+                {
+                    "title": "Compliance Status",
+                    "value": f"`{compliance_status}`",
+                    "short": True,
+                },
                 {"title": "Severity", "value": f"`{severity}`", "short": True},
                 {"title": "Control ID", "value": f"`{control_id}`", "short": True},
                 {"title": "Account ID", "value": f"`{aws_account_id}`", "short": True},
-                {"title": "First Observed", "value": f"`{first_observed}`", "short": True},
+                {
+                    "title": "First Observed",
+                    "value": f"`{first_observed}`",
+                    "short": True,
+                },
                 {"title": "Last Updated", "value": f"`{last_updated}`", "short": True},
-                {"title": "Affected Resource", "value": f"`{affected_resource}`", "short": False},
+                {
+                    "title": "Affected Resource",
+                    "value": f"`{affected_resource}`",
+                    "short": False,
+                },
                 {"title": "Generator", "value": f"`{generator_id}`", "short": False},
                 {"title": "Control Url", "value": f"`{control_url}`", "short": False},
                 {"title": "Finding Url", "value": f"`{finding_url}`", "short": False},
-                {"title": "Remediation", "value": f"`{remediation_url}`", "short": False},
+                {
+                    "title": "Remediation",
+                    "value": f"`{remediation_url}`",
+                    "short": False,
+                },
             ],
             "text": f"AWS Inspector Finding - {title}",
         }
@@ -218,20 +235,26 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
         Id = finding.get("Id", "No ID Provided")
         title = finding.get("Title", "No Title Provided")
         description = finding.get("Description", "No Description Provided")
-        control_id = finding['ProductFields'].get('ControlId', 'N/A')
+        control_id = finding["ProductFields"].get("ControlId", "N/A")
         control_url = service_url + f"#/controls/{control_id}"
-        aws_account_id = finding.get('AwsAccountId', 'Unknown Account')
-        first_observed = finding.get('FirstObservedAt', 'Unknown Date')
-        last_updated = finding.get('UpdatedAt', 'Unknown Date')
-        affected_resource = finding['Resources'][0].get('Id', 'Unknown Resource')
-        remediation_url = finding.get("Remediation", {}).get("Recommendation", {}).get("Url", "#")
+        aws_account_id = finding.get("AwsAccountId", "Unknown Account")
+        first_observed = finding.get("FirstObservedAt", "Unknown Date")
+        last_updated = finding.get("UpdatedAt", "Unknown Date")
+        affected_resource = finding["Resources"][0].get("Id", "Unknown Resource")
+        remediation_url = (
+            finding.get("Remediation", {}).get("Recommendation", {}).get("Url", "#")
+        )
         generator_id = finding.get("GeneratorId", "Unknown Generator")
 
-        finding_base_path = "#/findings?search=Id%3D%255Coperator%255C%253AEQUALS%255C%253A"
-        double_encoded_id = urllib.parse.quote(urllib.parse.quote(Id, safe=''), safe='')
+        finding_base_path = (
+            "#/findings?search=Id%3D%255Coperator%255C%253AEQUALS%255C%253A"
+        )
+        double_encoded_id = urllib.parse.quote(urllib.parse.quote(Id, safe=""), safe="")
         finding_url = f"{service_url}{finding_base_path}{double_encoded_id}"
 
-        color = SecurityHubSeverity.get(severity.upper(), SecurityHubSeverity.INFORMATIONAL).value
+        color = SecurityHubSeverity.get(
+            severity.upper(), SecurityHubSeverity.INFORMATIONAL
+        ).value
         if compliance_status == "PASSED":
             color = "#4BB543"
 
@@ -241,17 +264,33 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
             "fields": [
                 {"title": "Title", "value": f"`{title}`", "short": False},
                 {"title": "Description", "value": f"`{description}`", "short": False},
-                {"title": "Compliance Status", "value": f"`{compliance_status}`", "short": True},
+                {
+                    "title": "Compliance Status",
+                    "value": f"`{compliance_status}`",
+                    "short": True,
+                },
                 {"title": "Severity", "value": f"`{severity}`", "short": True},
                 {"title": "Control ID", "value": f"`{control_id}`", "short": True},
                 {"title": "Account ID", "value": f"`{aws_account_id}`", "short": True},
-                {"title": "First Observed", "value": f"`{first_observed}`", "short": True},
+                {
+                    "title": "First Observed",
+                    "value": f"`{first_observed}`",
+                    "short": True,
+                },
                 {"title": "Last Updated", "value": f"`{last_updated}`", "short": True},
-                {"title": "Affected Resource", "value": f"`{affected_resource}`", "short": False},
+                {
+                    "title": "Affected Resource",
+                    "value": f"`{affected_resource}`",
+                    "short": False,
+                },
                 {"title": "Generator", "value": f"`{generator_id}`", "short": False},
                 {"title": "Control Url", "value": f"`{control_url}`", "short": False},
                 {"title": "Finding Url", "value": f"`{finding_url}`", "short": False},
-                {"title": "Remediation", "value": f"`{remediation_url}`", "short": False},
+                {
+                    "title": "Remediation",
+                    "value": f"`{remediation_url}`",
+                    "short": False,
+                },
             ],
             "text": f"AWS Security Hub Finding - {title}",
         }
@@ -513,7 +552,9 @@ def format_default(
     return attachments
 
 
-def parse_notification(message: Dict[str, Any], subject: Optional[str], region: str) -> Optional[Dict]:
+def parse_notification(
+    message: Dict[str, Any], subject: Optional[str], region: str
+) -> Optional[Dict]:
     """
     Parse notification message and format into Slack message payload
 
@@ -526,7 +567,10 @@ def parse_notification(message: Dict[str, Any], subject: Optional[str], region: 
         return format_cloudwatch_alarm(message=message, region=region)
     if isinstance(message, Dict) and message.get("detail-type") == "GuardDuty Finding":
         return format_guardduty_finding(message=message, region=message["region"])
-    if isinstance(message, Dict) and message.get("detail-type") == "Security Hub Findings - Imported":
+    if (
+        isinstance(message, Dict)
+        and message.get("detail-type") == "Security Hub Findings - Imported"
+    ):
         return format_aws_security_hub(message=message, region=message["region"])
     if isinstance(message, Dict) and message.get("detail-type") == "AWS Health Event":
         return format_aws_health(message=message, region=message["region"])
@@ -550,7 +594,7 @@ def get_slack_message_payload(
     slack_channel = os.environ["SLACK_CHANNEL"]
 
     payload: Dict[str, Any] = {
-      "channel": slack_channel,
+        "channel": slack_channel,
     }
 
     attachment = None
@@ -591,24 +635,18 @@ def send_slack_notification(payload: Dict[str, Any]) -> str:
         data=json.dumps(payload).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {slack_token}"
-        }
+            "Authorization": f"Bearer {slack_token}",
+        },
     )
 
     try:
         result = urllib.request.urlopen(req)
         response_body = result.read().decode("utf-8")
-        return json.dumps({
-            "code": result.getcode(),
-            "body": response_body
-        })
+        return json.dumps({"code": result.getcode(), "body": response_body})
     except HTTPError as e:
         error_body = e.read().decode("utf-8")
         logger.error(f"Slack API error: {error_body}")
-        return json.dumps({
-            "code": e.getcode(),
-            "body": error_body
-        })
+        return json.dumps({"code": e.getcode(), "body": error_body})
 
 
 def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:

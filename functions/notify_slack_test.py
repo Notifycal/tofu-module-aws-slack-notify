@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    Slack Notification Test
-    -----------------------
+Slack Notification Test
+-----------------------
 
-    Unit tests for `notify_slack.py`
+Unit tests for `notify_slack.py`
 
 """
 
@@ -22,6 +22,7 @@ def test_sns_get_slack_message_payload_snapshots(snapshot, monkeypatch):
     """
 
     monkeypatch.setenv("SLACK_CHANNEL", "slack_testing_sandbox")
+    monkeypatch.setenv("SLACK_BOT_TOKEN", "xoxb-fake-token-for-test")
 
     # These are SNS messages that invoke the lambda handler; the event payload is in the
     # `message` field
@@ -56,6 +57,7 @@ def test_event_get_slack_message_payload_snapshots(snapshot, monkeypatch):
     Run `pipenv run test:updatesnapshots` to update snapshot images
     """
 
+    monkeypatch.setenv("SLACK_BOT_TOKEN", "xoxb-fake-token-for-test")
     monkeypatch.setenv("SLACK_CHANNEL", "slack_testing_sandbox")
 
     # These are just the raw events that will be converted to JSON string and
