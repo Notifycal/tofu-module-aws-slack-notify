@@ -88,7 +88,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudwatch_alarm
                             }
                         ],
                         'text': {
-                            'text': '''Jan 12, 2017 05:30 PM CET
+                            'text': '''Jan 12, 2017 04:30 PM UTC
 
 Alarm Name:\t*<https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=Example|Example>*''',
                             'type': 'mrkdwn'
@@ -326,7 +326,7 @@ snapshots['test_sns_get_slack_message_payload_snapshots message_cloudwatch_alarm
                             }
                         ],
                         'text': {
-                            'text': '''Feb 12, 2019 04:45 PM CET
+                            'text': '''Feb 12, 2019 03:45 PM UTC
 
 Alarm Name:\t*<https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=DBMigrationRequired|DBMigrationRequired>*''',
                             'type': 'mrkdwn'

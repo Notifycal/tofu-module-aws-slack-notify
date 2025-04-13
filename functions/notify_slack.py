@@ -13,7 +13,7 @@ import os
 import re
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, Optional, Union, cast
 from urllib.error import HTTPError
@@ -42,9 +42,8 @@ class AwsService(Enum):
 
 def format_iso_date(date: str) -> str:
     dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z")
-    # Convert to local timezone (system timezone)
-    local_dt = dt.astimezone()
-    return local_dt.strftime("%b %d, %Y %I:%M %p %Z")
+    utc_dt = dt.astimezone(timezone.utc)
+    return utc_dt.strftime("%b %d, %Y %I:%M %p UTC")
 
 
 def get_service_url(region: str, service: str) -> str:
