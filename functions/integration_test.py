@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Integration Test
-----------------
+    Integration Test
+    ----------------
 
-Executes tests against live Slack webhook
+    Executes tests against live Slack webhook
 
 """
 
