@@ -583,8 +583,6 @@ def send_slack_notification(payload: Dict[str, Any]) -> str:
     """
     slack_token = os.environ["SLACK_BOT_TOKEN"]
 
-    logger.info(json.dumps(payload))
-
     req = urllib.request.Request(
         "https://slack.com/api/chat.postMessage",
         data=json.dumps(payload).encode("utf-8"),
