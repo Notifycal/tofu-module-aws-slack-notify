@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.0.0](https://github.com/Notifycal/tofu-module-aws-slack-notify/compare/v6.6.0...v7.0.0) (2025-04-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* work with bot post message ([#1](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/1))
+
+### Features
+
+* work with bot post message ([#1](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/1)) ([73acd8c](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/73acd8c4ceba602bca7b5b3181a254f6861e9784))
+
+
+### Bug Fixes
+
+* **ci:** add missing permissions ([dcaff3a](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/dcaff3a8f9dd8bb4a08029d92f80c08c43b5369c))
+
 ## [6.6.0](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/compare/v6.5.2...v6.6.0) (2025-03-12)
 
 
