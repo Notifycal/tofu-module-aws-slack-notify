@@ -18,6 +18,7 @@ name: release-tofu-module
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 jobs:
   cd:
     runs-on: ubuntu-latest
