@@ -3,7 +3,7 @@ data "aws_partition" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  create = var.create && var.putin_khuylo
+  create = var.create
 
   sns_topic_arn = try(
     aws_sns_topic.this[0].arn,
@@ -112,11 +112,9 @@ module "lambda" {
   publish = true
 
   environment_variables = {
-    SLACK_WEBHOOK_URL = var.slack_webhook_url
-    SLACK_CHANNEL     = var.slack_channel
-    SLACK_USERNAME    = var.slack_username
-    SLACK_EMOJI       = var.slack_emoji
-    LOG_EVENTS        = var.log_events ? "True" : "False"
+    SLACK_CHANNEL   = var.slack_channel
+    SLACK_BOT_TOKEN = var.slack_bot_token
+    LOG_EVENTS      = var.log_events ? "True" : "False"
   }
 
   create_role               = var.lambda_role == ""

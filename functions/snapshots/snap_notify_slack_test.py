@@ -58,9 +58,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_aws_health_event
                 'text': 'New AWS Health Event for EC2'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -68,46 +66,57 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudwatch_alarm
     {
         'attachments': [
             {
-                'color': 'danger',
-                'fallback': 'Alarm Example triggered',
-                'fields': [
+                'blocks': [
                     {
-                        'short': True,
-                        'title': 'Alarm Name',
-                        'value': '`Example`'
+                        'text': {
+                            'text': ':rotating_light: ALARM: "Example" in EU - Ireland :rotating_light:',
+                            'type': 'plain_text'
+                        },
+                        'type': 'header'
                     },
                     {
-                        'short': False,
-                        'title': 'Alarm Description',
-                        'value': '`Example alarm description.`'
+                        'fields': [
+                            {
+                                'text': '''*Old state*
+`OK`''',
+                                'type': 'mrkdwn'
+                            },
+                            {
+                                'text': '''*Current state*
+`ALARM`''',
+                                'type': 'mrkdwn'
+                            }
+                        ],
+                        'text': {
+                            'text': '''Jan 12, 2017 04:30 PM UTC
+
+Alarm Name:\t*<https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=Example|Example>*''',
+                            'type': 'mrkdwn'
+                        },
+                        'type': 'section'
                     },
                     {
-                        'short': False,
-                        'title': 'Alarm reason',
-                        'value': '`Threshold Crossed`'
+                        'type': 'divider'
                     },
                     {
-                        'short': True,
-                        'title': 'Old State',
-                        'value': '`OK`'
-                    },
-                    {
-                        'short': True,
-                        'title': 'Current State',
-                        'value': '`ALARM`'
-                    },
-                    {
-                        'short': False,
-                        'title': 'Link to Alarm',
-                        'value': 'https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=Example'
+                        'elements': [
+                            {
+                                'text': '''*Alarm Description:*
+Example alarm description.''',
+                                'type': 'mrkdwn'
+                            },
+                            {
+                                'text': '''*Alarm Reason:*
+Threshold Crossed''',
+                                'type': 'mrkdwn'
+                            }
+                        ],
+                        'type': 'context'
                     }
-                ],
-                'text': 'AWS CloudWatch notification - Example'
+                ]
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -162,9 +171,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_guardduty_findin
                 'text': 'AWS GuardDuty Finding - SAMPLE Unprotected port on EC2 instance i-123123123 is being probed'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -219,9 +226,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_guardduty_findin
                 'text': 'AWS GuardDuty Finding - SAMPLE Unprotected port on EC2 instance i-123123123 is being probed'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -276,110 +281,22 @@ snapshots['test_event_get_slack_message_payload_snapshots event_guardduty_findin
                 'text': 'AWS GuardDuty Finding - SAMPLE Unprotected port on EC2 instance i-123123123 is being probed'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
 snapshots['test_sns_get_slack_message_payload_snapshots message_backup.json'] = [
     {
-        'attachments': [
-            {
-                'fields': [
-                    {
-                        'title': '✅ An AWS Backup job was completed successfully'
-                    },
-                    {
-                        'short': False,
-                        'value': 'BackupJob ID'
-                    },
-                    {
-                        'short': False,
-                        'value': '`1b2345b2-f22c-4dab-5eb6-bbc7890ed123`'
-                    },
-                    {
-                        'short': False,
-                        'value': 'Resource ARN'
-                    },
-                    {
-                        'short': False,
-                        'value': '`arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012e`'
-                    },
-                    {
-                        'short': False,
-                        'value': 'Recovery point ARN'
-                    },
-                    {
-                        'short': False,
-                        'value': '`arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012d`'
-                    }
-                ]
-            }
-        ],
         'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'text': 'An AWS Backup job was completed successfully. Recovery point ARN: arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012d. Resource ARN : arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012e. BackupJob ID : 1b2345b2-f22c-4dab-5eb6-bbc7890ed123'
     },
     {
-        'attachments': [
-            {
-                'fields': [
-                    {
-                        'title': '⚠️ An AWS Backup job failed'
-                    },
-                    {
-                        'short': False,
-                        'value': 'BackupJob ID'
-                    },
-                    {
-                        'short': False,
-                        'value': '`1b2345b2-f22c-4dab-5eb6-bbc7890ed123`'
-                    },
-                    {
-                        'short': False,
-                        'value': 'Resource ARN'
-                    },
-                    {
-                        'short': False,
-                        'value': '`arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012e`'
-                    }
-                ]
-            }
-        ],
         'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'text': 'An AWS Backup job failed. Resource ARN : arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012e. BackupJob ID : 1b2345b2-f22c-4dab-5eb6-bbc7890ed123'
     },
     {
-        'attachments': [
-            {
-                'fields': [
-                    {
-                        'title': '⚠️ An AWS Backup job failed to complete in time'
-                    },
-                    {
-                        'short': False,
-                        'value': 'BackupJob ID'
-                    },
-                    {
-                        'short': False,
-                        'value': '`1b2345b2-f22c-4dab-5eb6-bbc7890ed123`'
-                    },
-                    {
-                        'short': False,
-                        'value': 'Resource ARN'
-                    },
-                    {
-                        'short': False,
-                        'value': '`arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012e`'
-                    }
-                ]
-            }
-        ],
         'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'text': 'An AWS Backup job failed to complete in time. Resource ARN : arn:aws:ec2:us-west-1:123456789012:volume/vol-012f345df6789012e. BackupJob ID : 1b2345b2-f22c-4dab-5eb6-bbc7890ed123'
     }
 ]
 
@@ -387,46 +304,57 @@ snapshots['test_sns_get_slack_message_payload_snapshots message_cloudwatch_alarm
     {
         'attachments': [
             {
-                'color': 'good',
-                'fallback': 'Alarm DBMigrationRequired triggered',
-                'fields': [
+                'blocks': [
                     {
-                        'short': True,
-                        'title': 'Alarm Name',
-                        'value': '`DBMigrationRequired`'
+                        'text': {
+                            'text': ':white_check_mark: OK: "DBMigrationRequired" in US (Virginia) :white_check_mark:',
+                            'type': 'plain_text'
+                        },
+                        'type': 'header'
                     },
                     {
-                        'short': False,
-                        'title': 'Alarm Description',
-                        'value': '`App is reporting "A JPA error occurred(Unable to build EntityManagerFactory)"`'
+                        'fields': [
+                            {
+                                'text': '''*Old state*
+`ALARM`''',
+                                'type': 'mrkdwn'
+                            },
+                            {
+                                'text': '''*Current state*
+`OK`''',
+                                'type': 'mrkdwn'
+                            }
+                        ],
+                        'text': {
+                            'text': '''Feb 12, 2019 03:45 PM UTC
+
+Alarm Name:\t*<https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=DBMigrationRequired|DBMigrationRequired>*''',
+                            'type': 'mrkdwn'
+                        },
+                        'type': 'section'
                     },
                     {
-                        'short': False,
-                        'title': 'Alarm reason',
-                        'value': '`Threshold Crossed: 1 datapoint [1.0 (12/02/19 15:44:00)] was not less than the threshold (1.0).`'
+                        'type': 'divider'
                     },
                     {
-                        'short': True,
-                        'title': 'Old State',
-                        'value': '`ALARM`'
-                    },
-                    {
-                        'short': True,
-                        'title': 'Current State',
-                        'value': '`OK`'
-                    },
-                    {
-                        'short': False,
-                        'title': 'Link to Alarm',
-                        'value': 'https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=DBMigrationRequired'
+                        'elements': [
+                            {
+                                'text': '''*Alarm Description:*
+App is reporting "A JPA error occurred(Unable to build EntityManagerFactory)"''',
+                                'type': 'mrkdwn'
+                            },
+                            {
+                                'text': '''*Alarm Reason:*
+Threshold Crossed: 1 datapoint [1.0 (12/02/19 15:44:00)] was not less than the threshold (1.0).''',
+                                'type': 'mrkdwn'
+                            }
+                        ],
+                        'type': 'context'
                     }
-                ],
-                'text': 'AWS CloudWatch notification - DBMigrationRequired'
+                ]
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -474,9 +402,7 @@ snapshots['test_sns_get_slack_message_payload_snapshots message_dms_notification
                 'title': 'DMS Notification Message'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -539,9 +465,7 @@ snapshots['test_sns_get_slack_message_payload_snapshots message_glue_notificatio
                 'title': 'Message'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
@@ -596,37 +520,18 @@ snapshots['test_sns_get_slack_message_payload_snapshots message_guardduty_findin
                 'text': 'AWS GuardDuty Finding - SAMPLE Unprotected port on EC2 instance i-123123123 is being probed'
             }
         ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
+        'channel': 'slack_testing_sandbox'
     }
 ]
 
 snapshots['test_sns_get_slack_message_payload_snapshots message_text_message.json'] = [
     {
-        'attachments': [
-            {
-                'fallback': 'A new message',
-                'fields': [
-                    {
-                        'short': False,
-                        'value': '''This
+        'channel': 'slack_testing_sandbox',
+        'text': '''This
 is
 a typical multi-line
 message from SNS!
 
 Have a ~good~ amazing day! :)'''
-                    }
-                ],
-                'mrkdwn_in': [
-                    'value'
-                ],
-                'text': 'AWS notification',
-                'title': 'All Fine'
-            }
-        ],
-        'channel': 'slack_testing_sandbox',
-        'icon_emoji': ':aws:',
-        'username': 'notify_slack_test'
     }
 ]

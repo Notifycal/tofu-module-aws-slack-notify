@@ -7,13 +7,13 @@
 
 """
 
-import base64
 import json
 import logging
 import os
 import re
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, Optional, Union, cast
 from urllib.error import HTTPError
@@ -28,6 +28,9 @@ KMS_CLIENT = boto3.client("kms", region_name=REGION)
 
 SECURITY_HUB_CLIENT = boto3.client('securityhub', region_name=REGION)
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 
 class AwsService(Enum):
     """AWS service supported by function"""
@@ -37,20 +40,10 @@ class AwsService(Enum):
     securityhub = "securityhub"
 
 
-def decrypt_url(encrypted_url: str) -> str:
-    """Decrypt encrypted URL with KMS
-
-    :param encrypted_url: URL to decrypt with KMS
-    :returns: plaintext URL
-    """
-    try:
-        decrypted_payload = KMS_CLIENT.decrypt(
-            CiphertextBlob=base64.b64decode(encrypted_url)
-        )
-        return decrypted_payload["Plaintext"].decode()
-    except Exception:
-        logging.exception("Failed to decrypt URL with KMS")
-        return ""
+def format_iso_date(date: str) -> str:
+    dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z")
+    utc_dt = dt.astimezone(timezone.utc)
+    return utc_dt.strftime("%b %d, %Y %I:%M %p UTC")
 
 
 def get_service_url(region: str, service: str) -> str:
@@ -73,11 +66,11 @@ def get_service_url(region: str, service: str) -> str:
 
 
 class CloudWatchAlarmState(Enum):
-    """Maps CloudWatch notification state to Slack message format color"""
+    """Maps CloudWatch notification state to Slack emoji"""
 
-    OK = "good"
-    INSUFFICIENT_DATA = "warning"
-    ALARM = "danger"
+    OK = ":white_check_mark:"
+    INSUFFICIENT_DATA = ":grey_question:"
+    ALARM = ":rotating_light:"
 
 
 def format_cloudwatch_alarm(message: Dict[str, Any], region: str) -> Dict[str, Any]:
@@ -90,39 +83,55 @@ def format_cloudwatch_alarm(message: Dict[str, Any], region: str) -> Dict[str, A
 
     cloudwatch_url = get_service_url(region=region, service="cloudwatch")
     alarm_name = message["AlarmName"]
+    alarm_link = f"{cloudwatch_url}#alarm:alarmFilter=ANY;name={urllib.parse.quote(alarm_name)}"
+    alarm_date = format_iso_date(message["StateChangeTime"])
+    alarm_emoji = CloudWatchAlarmState[message["NewStateValue"]].value
+
+    alarm_title = f"{alarm_emoji} {message['NewStateValue']}: \"{alarm_name}\" in {message['Region']} {alarm_emoji}"
 
     return {
-        "color": CloudWatchAlarmState[message["NewStateValue"]].value,
-        "fallback": f"Alarm {alarm_name} triggered",
-        "fields": [
-            {"title": "Alarm Name", "value": f"`{alarm_name}`", "short": True},
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": alarm_title
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": f"{alarm_date}\n\nAlarm Name:\t*<{alarm_link}|{alarm_name}>*"
+          },
+          "fields": [
             {
-                "title": "Alarm Description",
-                "value": f"`{message['AlarmDescription']}`",
-                "short": False,
+              "type": "mrkdwn",
+              "text": f"*Old state*\n`{message['OldStateValue']}`"
             },
             {
-                "title": "Alarm reason",
-                "value": f"`{message['NewStateReason']}`",
-                "short": False,
+              "type": "mrkdwn",
+              "text": f"*Current state*\n`{message['NewStateValue']}`"
+            }
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "context",
+          "elements": [
+            {
+              "type": "mrkdwn",
+              "text": f"*Alarm Description:*\n{message['AlarmDescription']}"
             },
             {
-                "title": "Old State",
-                "value": f"`{message['OldStateValue']}`",
-                "short": True,
-            },
-            {
-                "title": "Current State",
-                "value": f"`{message['NewStateValue']}`",
-                "short": True,
-            },
-            {
-                "title": "Link to Alarm",
-                "value": f"{cloudwatch_url}#alarm:alarmFilter=ANY;name={urllib.parse.quote(alarm_name)}",
-                "short": False,
-            },
-        ],
-        "text": f"AWS CloudWatch notification - {message['AlarmName']}",
+              "type": "mrkdwn",
+              "text": f"*Alarm Reason:*\n{message['NewStateReason']}"
+            }
+          ]
+        }
+      ]
     }
 
 
@@ -149,9 +158,9 @@ def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, A
                 }],
                 Workflow={"Status": "NOTIFIED"}
             )
-            logging.warning(f"Successfully updated finding status to NOTIFIED: {json.dumps(notified)}")
+            logger.warning(f"Successfully updated finding status to NOTIFIED: {json.dumps(notified)}")
     except Exception as e:
-        logging.error(f"Failed to update finding status: {str(e)}")
+        logger.error(f"Failed to update finding status: {str(e)}")
         pass
 
     if finding.get("ProductName") == "Inspector":
@@ -538,57 +547,65 @@ def get_slack_message_payload(
     """
 
     slack_channel = os.environ["SLACK_CHANNEL"]
-    slack_username = os.environ["SLACK_USERNAME"]
-    slack_emoji = os.environ["SLACK_EMOJI"]
 
-    payload = {
-        "channel": slack_channel,
-        "username": slack_username,
-        "icon_emoji": slack_emoji,
+    payload: Dict[str, Any] = {
+      "channel": slack_channel,
     }
+
     attachment = None
 
     if isinstance(message, str):
         try:
             message = json.loads(message)
         except json.JSONDecodeError:
-            logging.info("Not a structured payload, just a string message")
+            logger.info("Not a structured payload, just a string message")
+            if isinstance(message, str):
+                payload["text"] = message  # ✅ type is now definitely str
+                return payload
 
     message = cast(Dict[str, Any], message)
 
     if "attachments" in message or "text" in message:
-        payload = {**payload, **message}
+        for key in ["attachments", "blocks", "text"]:
+            if key in message:
+                payload[key] = message[key]
     else:
         attachment = parse_notification(message, subject, region)
-
-    if attachment:
-        payload["attachments"] = [attachment]  # type: ignore
+        if attachment:
+            payload["attachments"] = [attachment]
 
     return payload
 
 
 def send_slack_notification(payload: Dict[str, Any]) -> str:
     """
-    Send notification payload to Slack
-
-    :params payload: formatted Slack message payload
-    :returns: response details from sending notification
+    Send Slack message using chat.postMessage and a bot token.
     """
+    slack_token = os.environ["SLACK_BOT_TOKEN"]
 
-    slack_url = os.environ["SLACK_WEBHOOK_URL"]
-    if not slack_url.startswith("http"):
-        slack_url = decrypt_url(slack_url)
-
-    data = urllib.parse.urlencode({"payload": json.dumps(payload)}).encode("utf-8")
-    req = urllib.request.Request(slack_url)
+    req = urllib.request.Request(
+        "https://slack.com/api/chat.postMessage",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {slack_token}"
+        }
+    )
 
     try:
-        result = urllib.request.urlopen(req, data)
-        return json.dumps({"code": result.getcode(), "info": result.info().as_string()})
-
+        result = urllib.request.urlopen(req)
+        response_body = result.read().decode("utf-8")
+        return json.dumps({
+            "code": result.getcode(),
+            "body": response_body
+        })
     except HTTPError as e:
-        logging.error(f"{e}: result")
-        return json.dumps({"code": e.getcode(), "info": e.info().as_string()})
+        error_body = e.read().decode("utf-8")
+        logger.error(f"Slack API error: {error_body}")
+        return json.dumps({
+            "code": e.getcode(),
+            "body": error_body
+        })
 
 
 def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
@@ -601,7 +618,7 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
     """
 
     if os.environ.get("LOG_EVENTS", "False") == "True":
-        logging.info("Event logging enabled: %s", json.dumps(event))
+        logger.info("Event logging enabled: %s", json.dumps(event))
 
     for record in event["Records"]:
         sns = record["Sns"]
@@ -616,7 +633,7 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
 
     if json.loads(response)["code"] != 200:
         response_info = json.loads(response)["info"]
-        logging.error(
+        logger.error(
             f"Error: received status `{response_info}` using event `{event}` and context `{context}`"
         )
 

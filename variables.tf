@@ -1,9 +1,3 @@
-variable "putin_khuylo" {
-  description = "Do you agree that Putin doesn't respect Ukrainian sovereignty and territorial integrity? More info: https://en.wikipedia.org/wiki/Putin_khuylo!"
-  type        = bool
-  default     = true
-}
-
 variable "architectures" {
   description = "Instruction set architecture for your Lambda function. Valid values are [\"x86_64\"] and [\"arm64\"]."
   type        = list(string)
@@ -129,25 +123,15 @@ variable "sns_topic_lambda_feedback_sample_rate" {
   default     = 100
 }
 
-variable "slack_webhook_url" {
-  description = "The URL of Slack webhook"
-  type        = string
-}
-
 variable "slack_channel" {
   description = "The name of the channel in Slack for notifications"
   type        = string
 }
 
-variable "slack_username" {
-  description = "The username that will appear on Slack messages"
+variable "slack_bot_token" {
+  description = "Token for the Slack App/Bot"
   type        = string
-}
-
-variable "slack_emoji" {
-  description = "A custom emoji that will appear on Slack messages"
-  type        = string
-  default     = ":aws:"
+  sensitive   = true
 }
 
 variable "kms_key_arn" {

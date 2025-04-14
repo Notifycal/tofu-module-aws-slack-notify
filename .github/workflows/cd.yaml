@@ -1,0 +1,151 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'CHANGELOG.md'  # This is what release-please changes in the release PRs
+
+concurrency:
+  # github.head_ref is only set when the workflow was triggered by a
+  # pull_request and it contains the value of the source branch of the PR.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+name: release-tofu-module
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get GH token from Github App
+        id: gh-app-auth
+        uses: getsentry/action-github-app-token@v3
+        with:
+          app_id: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
+          private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          token: ${{ steps.gh-app-auth.outputs.token }}
+
+      # Using this to avoid unnecessary runs when files have not changed
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            .:
+              - '*.tf'
+              - 'modules/**'
+
+      # - name: Validate commits with commitlint
+      #   uses: wagoid/commitlint-github-action@v6
+      #   id: commitlint
+      #   with:
+      #     configFile: .commitlintrc.json
+
+      - name: Get tofu version from .opentofu-version
+        run: echo "tofu_version=$(cat .opentofu-version)" >> "${GITHUB_OUTPUT}"
+        id: get_tofu_version
+
+      - name: Cached tofu binary?
+        id: tofu-binary-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/tofu
+          key: ${{ runner.os }}-tofu-${{ env.TOFU_VERSION }}
+        env:
+          TOFU_VERSION: ${{ steps.get_tofu_version.outputs.tofu_version }}
+
+      - name: Install OpenTofu
+        # Only if there is no cache
+        if: steps.tofu-binary-cache.outputs.cache-hit != 'true'
+        run: |
+          DOWNLOAD_URL="https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
+          TEMP_DIR=$(mktemp -d)
+
+          curl -sL "${DOWNLOAD_URL}" -o "${TEMP_DIR}/tofu.tar.gz"
+          tar -zxf "${TEMP_DIR}/tofu.tar.gz" -C "${TEMP_DIR}"
+
+          chmod +x "${TEMP_DIR}/tofu"
+          sudo mv "${TEMP_DIR}/tofu" /usr/local/bin
+
+          rm -rf "${TEMP_DIR}"
+
+          tofu --version
+        env:
+          TOFU_VERSION: ${{ steps.get_tofu_version.outputs.tofu_version }}
+
+      - name: TF init and validate
+        run: |
+          CHANGED_MODULES=$(echo '${{ steps.filter.outputs.changes }}' | jq -r '.[]')
+
+          for dir in ${CHANGED_MODULES}; do
+            pushd "${dir}" > /dev/null || exit
+            echo
+            echo "Running init and validate against: $(pwd)"
+            tofu init && tofu validate
+            popd > /dev/null || exit
+          done
+
+      - run: tofu fmt -recursive
+        if: github.event_name == 'pull_request'
+
+      - id: has_submodules
+        run: |
+          if [[ -d "modules/" ]]; then
+            echo "RECURSIVE=true" >> "${GITHUB_ENV}"
+            echo "RECURSIVE_PATH=modules" >> "${GITHUB_ENV}"
+          else
+            echo "RECURSIVE=false" >> "${GITHUB_ENV}"
+            echo "RECURSIVE_PATH=" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Render OpenTofu docs
+        if: github.event_name == 'pull_request'
+        uses: terraform-docs/gh-actions@v1
+        with:
+          output-method: inject
+          config-file: .terraform-docs.yaml
+          recursive: ${{ env.RECURSIVE }}
+          recursive-path: ${{ env.RECURSIVE_PATH }}
+
+      - name: Debug
+        if: github.event_name == 'pull_request'
+        run: |
+          ls -lha .git
+          ls -lha .git/objects
+
+      - name: Fix .git owner
+        if: github.event_name == 'pull_request'
+        run: sudo chown runner:docker -R .git
+        # https://github.com/terraform-docs/gh-actions/issues/90
+
+      - name: 'Push to ${{ github.head_ref || github.ref_name }}'
+        if: github.event_name == 'pull_request'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+
+          # Check if there are any staged changes before committing
+          if git diff --cached --quiet; then
+            echo "git_changes=false" >> "${GITHUB_OUTPUT}"
+            echo "No changes to commit."
+          else
+            echo "git_changes=true" >> "${GITHUB_OUTPUT}"
+            git commit -m "ci(auto): generate docs and format"
+            git push
+          fi
+
+      - id: release-please
+        if: github.event_name == 'push'
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: terraform-module

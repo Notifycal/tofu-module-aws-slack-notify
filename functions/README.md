@@ -82,9 +82,7 @@ To run the unit tests:
 2.  From within the `examples/notify-slack-simple/` directory, update the `slack_*` variables to use your values:
 
 ```hcl
-  slack_webhook_url = "https://hooks.slack.com/services/AAA/BBB/CCC"
   slack_channel     = "aws-notification"
-  slack_username    = "reporter"
 ```
 
 3. Deploy the resources in the `examples/notify-slack-simple/` project using Terraform
