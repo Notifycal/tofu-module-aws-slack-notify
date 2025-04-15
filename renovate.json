@@ -8,7 +8,7 @@
       "commitMessagePrefix": "fix: ",
       "labels": ["terraform"],
       "groupName": "Terraform Modules & Providers",
-      "schedule": ["weekly"]
+      "schedule": ["after 9am on Monday"]
     }
   ],
   "regexManagers": [
