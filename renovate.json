@@ -19,7 +19,7 @@
     {
       "fileMatch": ["^/modules/.+\\.tf$"],
       "matchStrings": [
-        "source\\s*=\\s*\"(?<depName>[^\"]+)\"\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+        "source\\s*=\\s*\"(?<depName>[^\"]+)\"[\\s\\S]*?version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "datasourceTemplate": "terraform-module",
       "depNameTemplate": "{{depName}}",
@@ -28,7 +28,7 @@
     {
       "fileMatch": ["^/tf/.+\\.tf$"],
       "matchStrings": [
-        "source\\s*=\\s*\"(?<depName>[^\"]+)\"\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+        "source\\s*=\\s*\"(?<depName>[^\"]+)\"[\\s\\S]*?version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "datasourceTemplate": "terraform-module",
       "depNameTemplate": "{{depName}}",
