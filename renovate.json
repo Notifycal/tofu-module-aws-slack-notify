@@ -3,7 +3,7 @@
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "gitIgnoredAuthors": [
-    "github-actions <github-actions@github.com>"
+    "github-actions@github.com"
   ],
   "packageRules": [
     {
@@ -37,6 +37,14 @@
       "datasourceTemplate": "terraform-module",
       "depNameTemplate": "{{depName}}",
       "versioningTemplate": "semver"
+    }
+  ],
+  "hostRules": [
+    {
+      "hostType": "github",
+      "matchHost": "github.com",
+      "username": "x-access-token",
+      "token": "{{secrets.RENOVATE_TOKEN}}"
     }
   ]
 }
