@@ -9,6 +9,10 @@
       "labels": ["terraform"],
       "groupName": "Terraform Modules & Providers",
       "schedule": ["after 9am on Monday"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "enabled": false
     }
   ],
   "regexManagers": [
