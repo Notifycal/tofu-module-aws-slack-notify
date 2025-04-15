@@ -6,7 +6,9 @@
     {
       "matchManagers": ["terraform"],
       "commitMessagePrefix": "fix: ",
-      "labels": ["terraform"],
+      "commitMessageTopic": "{{depName}}",
+      "commitMessageExtra": "from {{currentValue}} to {{newValue}}",
+      "labels": ["dependencies", "terraform"],
       "groupName": "Terraform Modules & Providers",
       "schedule": ["after 9am on Monday"],
       "dependencyDashboardApproval": false
