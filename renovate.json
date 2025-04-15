@@ -3,8 +3,7 @@
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "gitIgnoredAuthors": [
-    "github-actions[bot]",
-    "github-actions"
+    "github-actions <github-actions@github.com>"
   ],
   "packageRules": [
     {
