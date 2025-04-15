@@ -49,13 +49,13 @@ See the [functions](https://github.com/Notifycal/tofu-module-aws-slack-notify/tr
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.8 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.94.1 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda"></a> [lambda](#module\_lambda) | terraform-aws-modules/lambda/aws | 6.8.0 |
+| <a name="module_lambda"></a> [lambda](#module\_lambda) | terraform-aws-modules/lambda/aws | 7.20.2 |
 
 ## Resources
 
