@@ -42,13 +42,5 @@
       "depNameTemplate": "{{depName}}",
       "versioningTemplate": "semver"
     }
-  ],
-  "hostRules": [
-    {
-      "hostType": "github",
-      "matchHost": "github.com",
-      "username": "x-access-token",
-      "token": "{{secrets.RENOVATE_TOKEN}}"
-    }
   ]
 }
