@@ -6,7 +6,7 @@ on:
 name: Add opened issue to project
 jobs:
   add-issue-to-project:
-    uses: Notifycal/gh-actions/.github/workflows/add-issue-to-project.reuse.yaml@v0.2.0
+    uses: Notifycal/gh-actions/.github/workflows/add-issue-to-project.reuse.yaml@v0.3.0
     with:
       issue-node-id: ${{ github.event.issue.node_id }}
     secrets:
