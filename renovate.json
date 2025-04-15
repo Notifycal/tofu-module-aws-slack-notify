@@ -16,7 +16,11 @@
     },
     {
       "matchManagers": ["github-actions"],
-      "enabled": false
+      "commitMessagePrefix": "ci(deps):",
+      "labels": ["dependencies", "ci", "github-actions"],
+      "groupName": "Github-actions",
+      "schedule": ["after 9am on Monday"],
+      "dependencyDashboardApproval": false
     }
   ],
   "regexManagers": [
