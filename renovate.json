@@ -2,6 +2,10 @@
   "extends": ["config:base"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
+  "gitIgnoredAuthors": [
+    "github-actions[bot]",
+    "github-actions"
+  ],
   "packageRules": [
     {
       "matchManagers": ["terraform"],
