@@ -1,0 +1,3 @@
+{
+  "extends": ["github>Notifycal/.github-private:renovate.json"]
+}
