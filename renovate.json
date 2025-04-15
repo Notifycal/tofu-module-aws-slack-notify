@@ -8,7 +8,8 @@
       "commitMessagePrefix": "fix: ",
       "labels": ["terraform"],
       "groupName": "Terraform Modules & Providers",
-      "schedule": ["after 9am on Monday"]
+      "schedule": ["after 9am on Monday"],
+      "dependencyDashboardApproval": false
     },
     {
       "matchManagers": ["github-actions"],
