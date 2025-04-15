@@ -21,6 +21,14 @@
       "groupName": "Github-actions",
       "schedule": ["after 9am on Monday"],
       "dependencyDashboardApproval": false
+    },
+    {
+      "matchManagers": ["pipenv"],
+      "commitMessagePrefix": "fix(deps):",
+      "labels": ["dependencies", "python"],
+      "groupName": "Python (Pipenv) Dependencies",
+      "schedule": ["after 9am on Monday"],
+      "dependencyDashboardApproval": false
     }
   ],
   "regexManagers": [
