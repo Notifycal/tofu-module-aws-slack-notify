@@ -5,8 +5,7 @@
   "packageRules": [
     {
       "matchManagers": ["terraform"],
-      "commitMessagePrefix": "fix(deps): ",
-      "commitMessageTopic": "{{depName}}",
+      "commitMessagePrefix": "fix(deps):",
       "commitMessageExtra": "from {{currentValue}} to {{newValue}}",
       "labels": ["dependencies", "terraform"],
       "groupName": "Terraform Modules & Providers",
