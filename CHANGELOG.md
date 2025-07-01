@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.0.3](https://github.com/Notifycal/tofu-module-aws-slack-notify/compare/v7.0.2...v7.0.3) (2025-07-01)
+
+
+### Bug Fixes
+
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8 ([#17](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/17)) ([e6bec13](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/e6bec13fff9d3533f494fe9c96d2019c4c0533bc))
+* remove deprecated policy_path ([#18](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/18)) ([26b2162](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/26b2162d67b7f4484f68bd08cd5bf5dc08d12b09))
+
 ## [7.0.2](https://github.com/Notifycal/tofu-module-aws-slack-notify/compare/v7.0.1...v7.0.2) (2025-06-23)
 
 
