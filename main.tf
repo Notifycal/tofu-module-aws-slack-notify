@@ -88,7 +88,7 @@ resource "aws_sns_topic_subscription" "sns_notify_slack" {
 
 module "lambda" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.0"
+  version = "8.1.2"
 
   create = var.create
 
