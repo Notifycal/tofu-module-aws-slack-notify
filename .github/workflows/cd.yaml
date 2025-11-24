@@ -30,7 +30,7 @@ jobs:
           app_id: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
           private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref || github.ref_name }}
           token: ${{ steps.gh-app-auth.outputs.token }}
