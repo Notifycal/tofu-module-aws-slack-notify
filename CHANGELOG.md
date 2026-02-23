@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.0.4](https://github.com/Notifycal/tofu-module-aws-slack-notify/compare/v7.0.3...v7.0.4) (2026-02-23)
+
+
+### Bug Fixes
+
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.1.0 ([#22](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/22)) ([43ea08c](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/43ea08cb605a371fd02a8ee79ae70a9817e49e78))
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.1.2 ([#26](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/26)) ([83676fb](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/83676fbfec1924ecedd3264d2fcd1afee6064b43))
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.2.0 ([#29](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/29)) ([69b2179](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/69b217910149efc1371403cd932d997d34200c7c))
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.3.0 ([#30](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/30)) ([66fefcf](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/66fefcf656732cf9c5eb76f40c66c6d561528139))
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.4.0 ([#31](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/31)) ([9798dee](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/9798dee650e408ba0c31cfbe258596bbcb380aa3))
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.5.1 ([#32](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/32)) ([be8292c](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/be8292cf7352546f6414e1db967dd379bd3d9f3e))
+* **deps:** Update Terraform terraform-aws-modules/lambda/aws to v8.7.0 ([#33](https://github.com/Notifycal/tofu-module-aws-slack-notify/issues/33)) ([962081a](https://github.com/Notifycal/tofu-module-aws-slack-notify/commit/962081aff0f60a5c2093906d4b7fa48cd8f4abf0))
+
 ## [7.0.3](https://github.com/Notifycal/tofu-module-aws-slack-notify/compare/v7.0.2...v7.0.3) (2025-07-01)
 
 
